@@ -1,5 +1,22 @@
 'use strict';
 
+window.badgePointerPose = (event, bounds) => {
+  const x = Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width));
+  const y = Math.max(0, Math.min(1, (event.clientY - bounds.top) / bounds.height));
+  const sensitivity = event.pointerType === 'touch' ? 1.5 : 1;
+  return { x: (.5 - y) * 17 * sensitivity, y: (x - .5) * 20 * sensitivity, mx: x * 100, my: y * 100 };
+};
+
+window.advanceBadgeMotion = (current, target, directTouch = false) => {
+  let moving = false;
+  for (const key of Object.keys(current)) {
+    // A held touch follows the latest sample without a trailing spring.
+    current[key] = directTouch ? target[key] : current[key] + (target[key] - current[key]) * .12;
+    if (Math.abs(target[key] - current[key]) > .015) moving = true;
+  }
+  return moving;
+};
+
 // Keep touch gestures on the card while preserving mouse hover and QR taps.
 window.bindBadgePointer = ({ stage, canInteract, onMove, onRelease }) => {
   let gesture = null;

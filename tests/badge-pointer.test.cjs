@@ -127,6 +127,36 @@ test('disabled motion does not start a gesture', () => {
   assert.equal(h.stage.hasPointerCapture(1), false);
 });
 
+test('touch reaches the requested pose on the next frame, then eases on release', () => {
+  const context = { window: {} };
+  vm.runInNewContext(source, context);
+  const { advanceBadgeMotion } = context.window;
+  const pose = { x: 6, y: 9, mx: 80, my: 20 };
+  const touch = { x: 0, y: 0, mx: 50, my: 50 };
+  assert.equal(advanceBadgeMotion(touch, pose, true), false);
+  assert.deepEqual(touch, pose);
+  advanceBadgeMotion(touch, { x: 0, y: 0, mx: 62, my: 33 });
+  assert.ok(touch.x > 0 && touch.x < pose.x);
+  const hover = { x: 0, y: 0, mx: 50, my: 50 };
+  assert.equal(advanceBadgeMotion(hover, pose), true);
+  assert.ok(hover.y > 0 && hover.y < pose.y);
+});
+
+test('short touch drags produce stronger bounded tilt without changing the light position', () => {
+  const context = { window: {} };
+  vm.runInNewContext(source, context);
+  const bounds = { left: 10, top: 20, width: 300, height: 450 };
+  const point = { clientX: 190, clientY: 200 };
+  const touch = context.window.badgePointerPose({ ...point, pointerType: 'touch' }, bounds);
+  const mouse = context.window.badgePointerPose({ ...point, pointerType: 'mouse' }, bounds);
+  assert.equal(touch.y, mouse.y * 1.5);
+  assert.equal(touch.x, mouse.x * 1.5);
+  assert.equal(touch.mx, mouse.mx);
+  assert.equal(touch.my, mouse.my);
+  const edge = context.window.badgePointerPose({ clientX: 1000, clientY: -1000, pointerType: 'touch' }, bounds);
+  assert.ok(edge.x <= 12.75 && edge.y <= 15);
+});
+
 test('badge decoration uses vector icons in the page and PNG exporter', () => {
   for (const file of ['index.html', 'app.js']) {
     const contents = fs.readFileSync(new URL(`../dist/${file}`, `file://${__filename.replaceAll('\\', '/')}`), 'utf8');

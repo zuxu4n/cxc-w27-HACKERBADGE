@@ -185,10 +185,11 @@ $('#reset-button').addEventListener('click', () => {
   toast('Sample details restored.');
 });
 
-// Spring-smoothed tilt and the moving foil/sparkle layers follow the pointer.
+// Touch follows the finger immediately; hover and release keep the spring easing.
 const target = { x: 0, y: 0, mx: 62, my: 33 };
 const current = { x: 0, y: 0, mx: 62, my: 33 };
 let activePointer = false;
+let directTouch = false;
 let frame = 0;
 let demoUntil = 0;
 
@@ -211,11 +212,7 @@ function tick(time) {
     target.mx = 62;
     target.my = 33;
   }
-  let moving = false;
-  for (const key of Object.keys(current)) {
-    current[key] += (target[key] - current[key]) * .12;
-    if (Math.abs(target[key] - current[key]) > .015) moving = true;
-  }
+  const moving = advanceBadgeMotion(current, target, activePointer && directTouch);
   badge.style.setProperty('--rx', `${current.x.toFixed(3)}deg`);
   badge.style.setProperty('--ry', `${current.y.toFixed(3)}deg`);
   badge.style.setProperty('--mx', `${current.mx.toFixed(2)}%`);
@@ -229,23 +226,19 @@ const resetBadgePointer = bindBadgePointer({
   stage,
   canInteract: () => state.holo && !reducedMotion.matches && !dialog.open,
   onMove: (event) => {
-    const bounds = stage.getBoundingClientRect();
-    const x = Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width));
-    const y = Math.max(0, Math.min(1, (event.clientY - bounds.top) / bounds.height));
     activePointer = true;
+    directTouch = event.pointerType === 'touch';
     demoUntil = 0;
-    target.x = (0.5 - y) * 17;
-    target.y = (x - 0.5) * 20;
-    target.mx = x * 100;
-    target.my = y * 100;
+    Object.assign(target, badgePointerPose(event, stage.getBoundingClientRect()));
     animate();
   },
-  onRelease: () => { activePointer = false; demoUntil = 0; animate(); }
+  onRelease: () => { activePointer = false; directTouch = false; demoUntil = 0; animate(); }
 });
 badge.addEventListener('keydown', (event) => {
   if (!state.holo || reducedMotion.matches) return;
   if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Escape'].includes(event.key)) return;
   event.preventDefault();
+  directTouch = false;
   activePointer = event.key !== 'Escape';
   demoUntil = 0;
   const delta = 3;
