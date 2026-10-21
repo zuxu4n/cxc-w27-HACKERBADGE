@@ -11,3 +11,15 @@
 .badge-footer{left:0;right:0;bottom:0;padding:12px 26px 17px;background:#101010;border-top:1px solid #ffffff25}
 .photo-preview,.portrait-wrap{background:linear-gradient(210deg,#868686 0%,#999999 42%,#c5c5c5 100%)}
 .badge h2{min-height:83.7px}
+/* Keep the event banner visible and fit the preview between both banners. */
+:root{--footer-height:44px}
+body{padding-bottom:calc(var(--footer-height) + env(safe-area-inset-bottom,0px))}
+.workspace{--workspace-height:calc(100dvh - 116px);min-height:0}
+.editor{padding-top:24px}
+.preview{--badge-scale:.78;height:var(--workspace-height);min-height:0;flex-shrink:0;padding-top:24px;padding-bottom:52px}
+.badge-stage{width:calc(392px * var(--badge-scale));height:calc(592px * var(--badge-scale));margin-top:40px}
+.badge{transform:scale(var(--badge-scale)) rotateX(var(--rx)) rotateY(var(--ry));transform-origin:top left}
+.preview-controls{margin-top:22px}
+.site-footer{position:fixed;left:0;right:0;bottom:0;z-index:30;max-width:none;width:100%;height:calc(var(--footer-height) + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);background:var(--paper)}
+#toast{bottom:calc(var(--footer-height) + env(safe-area-inset-bottom,0px) + 16px)}
+@media(min-width:821px){.workspace{height:var(--workspace-height)}.editor{height:100%;min-height:0;overflow-y:auto}}

@@ -12,6 +12,23 @@ let qrSVG = '';
 let toastTimeout;
 let qrTimeout;
 
+function fitBadgePreview() {
+  const preview = $('.preview');
+  const headerHeight = $('.site-header').getBoundingClientRect().height;
+  const footerHeight = $('.site-footer').getBoundingClientRect().height;
+  const availableHeight = Math.max(0, window.innerHeight - headerHeight - footerHeight);
+  const previewStyle = getComputedStyle(preview);
+  const horizontalPadding = parseFloat(previewStyle.paddingLeft) + parseFloat(previewStyle.paddingRight);
+  const widthScale = (preview.clientWidth - horizontalPadding - 4) / 392;
+  // Reserve room for the top controls, scan button, and edition line.
+  const heightScale = (availableHeight - 160) / 592;
+  const scale = Math.max(.1, Math.min(1, widthScale, heightScale));
+  $('.workspace').style.setProperty('--workspace-height', `${availableHeight}px`);
+  preview.style.setProperty('--badge-scale', scale.toFixed(4));
+}
+
+window.addEventListener('resize', fitBadgePreview);
+
 function toast(message) {
   clearTimeout(toastTimeout);
   $('#toast').textContent = message;
@@ -354,6 +371,7 @@ async function exportBadge() {
 }
 $('#download-button').addEventListener('click', exportBadge);
 
+fitBadgePreview();
 renderIdentity();
 renderQR(state.qrUrl);
 setHolo(state.holo);
