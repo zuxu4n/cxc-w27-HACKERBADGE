@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#e8e8e8">
+  <meta name="description" content="Make your CxC W27 hacker badge. Topographic terrain, holographic foil, and a little room for your next big idea.">
+  <title>CxC W27 — Your hacker badge</title>
+  <link rel="icon" type="image/svg+xml" href="assets/cxc-logo.svg">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="assets/qrcode.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 19 19 5M5 5h14v14"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4m-5 5 5-5 5 5M4 17v4h16v-4"/></symbol>
+    <symbol id="i-scan" viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M3 12h18"/></symbol>
+    <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="m12 3 2.6 6.4L21 12l-6.4 2.6L12 21l-2.6-6.4L3 12l6.4-2.6L12 3Z"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 10a9 9 0 1 1 2 8M3 4v6h6"/></symbol>
+  </svg>
+
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="CxC W27 home"><span class="logo-window"><img src="assets/cxc-logo.svg" width="342.983" height="100.188" alt="CxC"></span><span class="brand-edition">W27</span></a>
+    <span class="header-label">THE HACKER BADGE LAB</span>
+    <div class="header-end"><span class="status-dot"></span><span>READY TO BUILD</span><span class="header-cross">+</span></div>
+  </header>
+
+  <main class="workspace">
+    <aside class="editor" aria-label="Customize your badge">
+      <div class="eyebrow"><span class="tiny-square"></span> 01 / YOUR IDENTITY</div>
+      <h1>A little you.<br>A lot of <span>possibility.</span></h1>
+      <p class="intro">New people. Big ideas. One badge<br class="desktop-break"> that’s unmistakably yours.</p>
+
+      <form id="badge-form" novalidate>
+        <div class="photo-field">
+          <div class="photo-preview"><img id="editor-photo" src="assets/profile.jpg" alt="Sample profile photo"></div>
+          <div><label for="photo-input" class="upload-label">Change photo <svg class="icon"><use href="#i-upload"/></svg></label><p>JPG, PNG or WebP · max 5 MB</p></div>
+          <input id="photo-input" class="visually-hidden" type="file" accept="image/jpeg,image/png,image/webp">
+        </div>
+        <div class="field"><label for="full-name">FULL NAME <span>01</span></label><input id="full-name" name="fullName" value="Alex Morgan" maxlength="48" autocomplete="name" required></div>
+        <div class="field"><label for="preferred-name">PREFERRED NAME <span>02</span></label><input id="preferred-name" name="preferredName" value="Alex" maxlength="24" placeholder="What should we call you?" autocomplete="nickname"></div>
+        <div class="field"><label for="team-name">TEAM NAME <span>03</span></label><input id="team-name" name="teamName" value="Ctrl Alt Elite" maxlength="36" placeholder="Your team name" autocomplete="off"></div>
+        <div class="field qr-field"><label for="qr-url">QR DESTINATION <span>04</span></label><input id="qr-url" name="qrUrl" type="url" value="https://example.com/badge/CXC-042" maxlength="300" spellcheck="false" aria-describedby="qr-help qr-error"><p id="qr-help" class="field-help">Use your profile or check-in link.</p><p id="qr-error" class="field-error" hidden>Enter a complete https:// or http:// URL.</p></div>
+        <button id="download-button" class="download-button" type="button"><span>Download badge</span><svg class="icon"><use href="#i-download"/></svg></button>
+        <div class="editor-footer"><span>PNG · HIGH RESOLUTION</span><button id="reset-button" class="reset-button" type="button" aria-label="Reset sample details"><svg class="icon"><use href="#i-reset"/></svg> Reset</button></div>
+      </form>
+      <p class="sample-note"><span class="tiny-square"></span> Sample details. Make them yours.</p>
+    </aside>
+
+    <section class="preview" aria-label="Live badge preview">
+      <div class="preview-topline"><div class="eyebrow">02 / THE FINISHED FEELING</div><button class="holo-toggle" id="holo-toggle" type="button" aria-pressed="true"><svg class="icon"><use href="#i-sparkle"/></svg><span>Holo on</span><span class="switch-track"><span></span></span></button></div>
+      <span class="stage-coordinate coordinate-top">43°28′ N<br>80°32′ W</span>
+      <span class="stage-cross cross-a" aria-hidden="true">+</span><span class="stage-cross cross-b" aria-hidden="true">+</span>
+      <div class="orbital orbital-one" aria-hidden="true"></div><div class="orbital orbital-two" aria-hidden="true"></div>
+      <div class="stage-watermark" aria-hidden="true">MAKE<br>YOUR<br>MARK.</div>
+
+      <div class="badge-stage" id="badge-stage">
+        <article class="badge" id="badge" tabindex="0" aria-label="Holographic hacker badge for Alex Morgan. Use arrow keys to tilt.">
+          <div class="badge-surface">
+            <div class="badge-grid" aria-hidden="true"></div>
+            <div class="badge-header"><span class="badge-logo-window"><img src="assets/cxc-logo.svg" width="342.983" height="100.188" alt="CxC"></span><div class="badge-edition">WINTER 2027<br><strong>HACKATHON / W27</strong></div></div>
+            <div class="badge-identity"><div class="name-area"><span class="badge-micro">HELLO, WORLD. I’M</span><h2 id="badge-name">Alex<br>Morgan</h2><p class="preferred-label">CALL ME <strong id="badge-preferred">ALEX</strong><span class="small-arrow">↗</span></p></div><div class="portrait-wrap"><img id="badge-photo" src="assets/profile.jpg" alt="Profile photo of Alex Morgan"><span class="portrait-corner" aria-hidden="true"></span><span class="portrait-index">H / 042</span></div></div>
+            <div class="role-band"><span class="role-star" aria-hidden="true">✳</span><span>HACKER</span><span class="role-chevrons" aria-hidden="true">≪</span></div>
+            <div class="team-row"><span class="badge-micro">BUILDING WITH</span><span id="badge-team">Ctrl Alt Elite</span><svg class="icon"><use href="#i-arrow"/></svg></div>
+            <div class="terrain-wrap" aria-hidden="true"><img class="badge-terrain" src="assets/cxc-terrain.png" alt=""><div class="terrain-fade"></div></div>
+            <div class="badge-lower-copy"><span class="lower-plus">+</span><span>CURIOUS MINDS.<br>UNCHARTED<br>TERRITORY.</span><span class="lower-coordinates">43.4723° N<br>80.5449° W</span></div>
+            <div class="badge-footer"><span>CXC—W27—042</span><span>GO MAKE SOMETHING. ↗</span></div>
+          </div>
+          <div class="foil foil-rainbow" aria-hidden="true"></div><div class="foil foil-sparkles" aria-hidden="true"></div><div class="foil foil-glare" aria-hidden="true"></div><div class="badge-rim" aria-hidden="true"></div>
+          <button id="qr-tile" class="qr-tile" type="button" aria-label="Enlarge QR code for scanning"><span class="qr-corner corner-tl"></span><span class="qr-corner corner-tr"></span><span class="qr-corner corner-bl"></span><span class="qr-corner corner-br"></span><span id="badge-qr"></span><span class="qr-caption">SCAN TO CONNECT <svg class="icon"><use href="#i-arrow"/></svg></span></button>
+        </article>
+        <div class="badge-shadow" aria-hidden="true"></div>
+      </div>
+
+      <div class="preview-controls"><span class="live-label"><span></span> LIVE PREVIEW</span><span class="control-divider"></span><button id="scan-button" type="button"><svg class="icon"><use href="#i-scan"/></svg> Scan mode</button></div>
+      <p class="tilt-hint"><svg class="icon"><use href="#i-sparkle"/></svg><span>Move over your badge. Catch the light.</span></p>
+      <div class="preview-bottomline"><span>ONE OF A KIND. JUST LIKE YOU.</span><span class="foil-label"><i></i> HOLOGRAPHIC EDITION</span></div>
+    </section>
+  </main>
+  <footer class="site-footer"><span>CODE × COLLABORATE × CREATE</span><span>CXC / W27 <span class="footer-slashes">///////</span></span></footer>
+
+  <dialog id="scan-dialog" aria-labelledby="scan-title"><div class="scan-dialog-header"><span class="eyebrow">CXC / W27</span><button id="close-scan" type="button" aria-label="Close scan mode"><svg class="icon"><use href="#i-close"/></svg></button></div><h2 id="scan-title">Let’s connect.</h2><p id="scan-name">Alex Morgan · Hacker</p><div id="large-qr"></div><span class="scan-instruction">POINT YOUR CAMERA AT THE CODE</span><a id="scan-link" href="https://example.com/badge/CXC-042" target="_blank" rel="noopener noreferrer">Open destination <svg class="icon"><use href="#i-arrow"/></svg></a><p class="scan-demo-note">Sample QR destination · edit it in the badge lab.</p></dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

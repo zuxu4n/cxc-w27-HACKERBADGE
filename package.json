@@ -1,0 +1,11 @@
+{
+  "name": "cxc-hacker-badge",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CxC W27 holographic hacker badge",
+  "scripts": {
+    "dev": "node server.mjs",
+    "start": "node server.mjs",
+    "check": "node --check dist/app.js && node --check server.mjs"
+  }
+}
