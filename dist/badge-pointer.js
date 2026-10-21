@@ -3,8 +3,10 @@
 window.badgePointerPose = (event, bounds) => {
   const x = Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width));
   const y = Math.max(0, Math.min(1, (event.clientY - bounds.top) / bounds.height));
-  const sensitivity = event.pointerType === 'touch' ? 1.5 : 1;
-  return { x: (.5 - y) * 17 * sensitivity, y: (x - .5) * 20 * sensitivity, mx: x * 100, my: y * 100 };
+  const touch = event.pointerType === 'touch';
+  const sensitivity = touch ? 1.5 : 1;
+  const vertical = touch ? y - .5 : .5 - y;
+  return { x: vertical * 17 * sensitivity, y: (x - .5) * 20 * sensitivity, mx: x * 100, my: y * 100 };
 };
 
 window.advanceBadgeMotion = (current, target, directTouch = false) => {
