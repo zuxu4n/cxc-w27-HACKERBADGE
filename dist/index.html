@@ -34,13 +34,13 @@
 
       <form id="badge-form" novalidate>
         <div class="photo-field">
-          <div class="photo-preview"><img id="editor-photo" src="assets/profile.jpg" alt="Sample profile photo"></div>
+          <div class="photo-preview"><img id="editor-photo" src="assets/faker.png" alt="Profile photo of Lee Sang-hyeok"></div>
           <div><label for="photo-input" class="upload-label">Change photo <svg class="icon"><use href="#i-upload"/></svg></label><p>JPG, PNG or WebP · max 5 MB</p></div>
           <input id="photo-input" class="visually-hidden" type="file" accept="image/jpeg,image/png,image/webp">
         </div>
-        <div class="field"><label for="full-name">FULL NAME <span>01</span></label><input id="full-name" name="fullName" value="Alex Morgan" maxlength="48" autocomplete="name" required></div>
-        <div class="field"><label for="preferred-name">PREFERRED NAME <span>02</span></label><input id="preferred-name" name="preferredName" value="Alex" maxlength="24" placeholder="What should we call you?" autocomplete="nickname"></div>
-        <div class="field"><label for="team-name">TEAM NAME <span>03</span></label><input id="team-name" name="teamName" value="Ctrl Alt Elite" maxlength="36" placeholder="Your team name" autocomplete="off"></div>
+        <div class="field"><label for="full-name">FULL NAME <span>01</span></label><input id="full-name" name="fullName" value="Lee Sang-hyeok" maxlength="48" autocomplete="name" required></div>
+        <div class="field"><label for="preferred-name">PREFERRED NAME <span>02</span></label><input id="preferred-name" name="preferredName" value="Faker" maxlength="24" placeholder="What should we call you?" autocomplete="nickname"></div>
+        <div class="field"><label for="team-name">TEAM NAME <span>03</span></label><input id="team-name" name="teamName" value="T1 League of Legends" maxlength="36" placeholder="Your team name" autocomplete="off"></div>
         <div class="field qr-field"><label for="qr-url">QR DESTINATION <span>04</span></label><input id="qr-url" name="qrUrl" type="url" value="https://example.com/badge/CXC-042" maxlength="300" spellcheck="false" aria-describedby="qr-help qr-error"><p id="qr-help" class="field-help">Use your profile or check-in link.</p><p id="qr-error" class="field-error" hidden>Enter a complete https:// or http:// URL.</p></div>
         <button id="download-button" class="download-button" type="button"><span>Download badge</span><svg class="icon"><use href="#i-download"/></svg></button>
         <div class="editor-footer"><span>PNG · HIGH RESOLUTION</span><button id="reset-button" class="reset-button" type="button" aria-label="Reset sample details"><svg class="icon"><use href="#i-reset"/></svg> Reset</button></div>
@@ -55,13 +55,13 @@
       <div class="stage-watermark" aria-hidden="true">MAKE<br>YOUR<br>MARK.</div>
 
       <div class="badge-stage" id="badge-stage">
-        <article class="badge" id="badge" tabindex="0" aria-label="Holographic hacker badge for Alex Morgan. Use arrow keys to tilt.">
+        <article class="badge" id="badge" tabindex="0" aria-label="Holographic hacker badge for Lee Sang-hyeok. Use arrow keys to tilt.">
           <div class="badge-surface">
             <div class="badge-grid" aria-hidden="true"></div>
             <div class="badge-header"><span class="badge-logo-window"><img src="assets/cxc-logo.svg" width="342.983" height="100.188" alt="CxC"></span><div class="badge-edition">WINTER 2027<br><strong>HACKATHON / W27</strong></div></div>
-            <div class="badge-identity"><div class="name-area"><span class="badge-micro">HELLO, WORLD. I’M</span><h2 id="badge-name">Alex<br>Morgan</h2><p class="preferred-label">CALL ME <strong id="badge-preferred">ALEX</strong><span class="small-arrow">↗</span></p></div><div class="portrait-wrap"><img id="badge-photo" src="assets/profile.jpg" alt="Profile photo of Alex Morgan"><span class="portrait-corner" aria-hidden="true"></span><span class="portrait-index">H / 042</span></div></div>
+            <div class="badge-identity"><div class="name-area"><span class="badge-micro">HELLO, WORLD. I’M</span><h2 id="badge-name">Lee<br>Sang-hyeok</h2><p class="preferred-label">CALL ME <strong id="badge-preferred">FAKER</strong><span class="small-arrow">↗</span></p></div><div class="portrait-wrap"><img id="badge-photo" src="assets/faker.png" alt="Profile photo of Lee Sang-hyeok"><span class="portrait-corner" aria-hidden="true"></span><span class="portrait-index">H / 042</span></div></div>
             <div class="role-band"><span class="role-star" aria-hidden="true">✳</span><span>HACKER</span><span class="role-chevrons" aria-hidden="true">≪</span></div>
-            <div class="team-row"><span class="badge-micro">BUILDING WITH</span><span id="badge-team">Ctrl Alt Elite</span><svg class="icon"><use href="#i-arrow"/></svg></div>
+            <div class="team-row"><span class="badge-micro">BUILDING WITH</span><span id="badge-team">T1 League of Legends</span><svg class="icon"><use href="#i-arrow"/></svg></div>
             <div class="terrain-wrap" aria-hidden="true"><img class="badge-terrain" src="assets/cxc-terrain.png" alt=""><div class="terrain-fade"></div></div>
             <div class="badge-lower-copy"><span class="lower-plus">+</span><span>CURIOUS MINDS.<br>UNCHARTED<br>TERRITORY.</span><span class="lower-coordinates">43.4723° N<br>80.5449° W</span></div>
             <div class="badge-footer"><span>CXC—W27—042</span><span>GO MAKE SOMETHING. ↗</span></div>
@@ -78,7 +78,7 @@
   </main>
   <footer class="site-footer"><span>CODE × COLLABORATE × CREATE</span><span>CXC / W27 <span class="footer-slashes">///////</span></span></footer>
 
-  <dialog id="scan-dialog" aria-labelledby="scan-title"><div class="scan-dialog-header"><span class="eyebrow">CXC / W27</span><button id="close-scan" type="button" aria-label="Close scan mode"><svg class="icon"><use href="#i-close"/></svg></button></div><h2 id="scan-title">Let’s connect.</h2><p id="scan-name">Alex Morgan · Hacker</p><div id="large-qr"></div><span class="scan-instruction">POINT YOUR CAMERA AT THE CODE</span><a id="scan-link" href="https://example.com/badge/CXC-042" target="_blank" rel="noopener noreferrer">Open destination <svg class="icon"><use href="#i-arrow"/></svg></a><p class="scan-demo-note">Sample QR destination · edit it in the badge lab.</p></dialog>
+  <dialog id="scan-dialog" aria-labelledby="scan-title"><div class="scan-dialog-header"><span class="eyebrow">CXC / W27</span><button id="close-scan" type="button" aria-label="Close scan mode"><svg class="icon"><use href="#i-close"/></svg></button></div><h2 id="scan-title">Let’s connect.</h2><p id="scan-name">Lee Sang-hyeok · Hacker</p><div id="large-qr"></div><span class="scan-instruction">POINT YOUR CAMERA AT THE CODE</span><a id="scan-link" href="https://example.com/badge/CXC-042" target="_blank" rel="noopener noreferrer">Open destination <svg class="icon"><use href="#i-arrow"/></svg></a><p class="scan-demo-note">Sample QR destination · edit it in the badge lab.</p></dialog>
   <div id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>

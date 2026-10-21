@@ -1,13 +1,13 @@
 'use strict';
 
 const $ = (selector) => document.querySelector(selector);
-const defaults = { fullName: 'Alex Morgan', preferredName: 'Alex', teamName: 'Ctrl Alt Elite', qrUrl: 'https://example.com/badge/CXC-042' };
+const defaults = { fullName: 'Lee Sang-hyeok', preferredName: 'Faker', teamName: 'T1 League of Legends', qrUrl: 'https://example.com/badge/CXC-042' };
 const form = $('#badge-form');
 const badge = $('#badge');
 const stage = $('#badge-stage');
 const dialog = $('#scan-dialog');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-const state = { ...defaults, photo: 'assets/profile.jpg', holo: !reducedMotion.matches };
+const state = { ...defaults, photo: 'assets/faker.png', holo: !reducedMotion.matches };
 let qrSVG = '';
 let toastTimeout;
 let qrTimeout;
@@ -36,6 +36,17 @@ function renderIdentity() {
   });
   nameNode.classList.toggle('long-name', fullName.length > 18);
   nameNode.style.fontSize = fullName.length > 30 ? '25px' : '';
+  const nameStyle = getComputedStyle(nameNode);
+  const nameMeasure = document.createElement('canvas').getContext('2d');
+  nameMeasure.letterSpacing = nameStyle.letterSpacing;
+  let nameSize = parseFloat(nameStyle.fontSize);
+  const availableWidth = nameNode.clientWidth - 2;
+  while (nameSize > 16) {
+    nameMeasure.font = `${nameStyle.fontWeight} ${nameSize}px ${nameStyle.fontFamily}`;
+    if (nameLines(fullName).every(line => nameMeasure.measureText(line).width <= availableWidth)) break;
+    nameSize -= 1;
+  }
+  nameNode.style.fontSize = `${nameSize}px`;
   $('#badge-preferred').textContent = state.preferredName.trim().toUpperCase() || fullName.split(' ')[0].toUpperCase();
   $('#badge-team').textContent = state.teamName.trim() || 'Finding my people';
   $('#badge-photo').alt = `Profile photo of ${fullName}`;
@@ -146,7 +157,7 @@ dialog.addEventListener('click', (event) => {
 
 $('#reset-button').addEventListener('click', () => {
   clearTimeout(qrTimeout);
-  Object.assign(state, defaults, { photo: 'assets/profile.jpg' });
+  Object.assign(state, defaults, { photo: 'assets/faker.png' });
   for (const [key, value] of Object.entries(defaults)) form.elements[key].value = value;
   $('#badge-photo').src = state.photo;
   $('#editor-photo').src = state.photo;
@@ -276,14 +287,24 @@ async function exportBadge() {
     ctx.textAlign = 'left';
     text('HELLO, WORLD. I’M', 26, 102, 7, '#101010', 'Atkinson, monospace');
     const fullName = state.fullName.trim() || 'Your name';
-    const fontSize = fullName.length > 30 ? 25 : fullName.length > 18 ? 32 : 45;
+    const renderedNameStyle = getComputedStyle($('#badge-name'));
+    const fontSize = parseFloat(renderedNameStyle.fontSize);
+    ctx.save();
+    ctx.letterSpacing = renderedNameStyle.letterSpacing;
     ctx.font = `800 ${fontSize}px Arial`;
-    const lines = nameLines(fullName).flatMap(line => wrapText(ctx, line, 223));
+    const lines = nameLines(fullName).flatMap(line => wrapText(ctx, line, $('#badge-name').clientWidth));
     lines.forEach((line, i) => text(line, 24, 146 + i * fontSize * .96, fontSize, '#101010', 'Arial', 800));
-    const preferredY = Math.min(239, 165 + (lines.length - 1) * fontSize * .96);
+    ctx.restore();
+    const preferredY = Math.min(239, 165 + Math.max(43.2, (lines.length - 1) * fontSize * .96));
     text('CALL ME', 26, preferredY, 8, '#101010', 'Atkinson, monospace');
     text((state.preferredName.trim() || fullName.split(' ')[0]).toUpperCase(), 72, preferredY, 10, '#1b66ff', 'Atkinson, monospace', 600);
     ctx.save(); ctx.filter = 'grayscale(1)';
+    const portraitBackdrop = ctx.createLinearGradient(366, 113, 272, 226);
+    portraitBackdrop.addColorStop(0, '#868686');
+    portraitBackdrop.addColorStop(.42, '#999999');
+    portraitBackdrop.addColorStop(1, '#c5c5c5');
+    ctx.fillStyle = portraitBackdrop;
+    ctx.fillRect(272, 113, 94, 113);
     const photoRatio = 94 / 113;
     let sw = photo.width, sh = photo.height;
     if (sw / sh > photoRatio) sw = sh * photoRatio; else sh = sw / photoRatio;
