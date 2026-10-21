@@ -3,6 +3,9 @@ import { readFile, writeFile } from 'node:fs/promises';
 const root = new URL('../', import.meta.url);
 const source = (file) => new URL(`vendor/qrbtf/${file}`, root);
 const read = (file) => readFile(source(file), 'utf8');
+// Reuse the supplied CxC vector geometry for the monochrome QR centerpiece.
+const logo = await readFile(new URL('dist/assets/cxc-logo.svg', root), 'utf8');
+const logoPaths = logo.match(/<path\b[^>]*\/>/g).join('').replace(/ id="[^"]*"/g, '').replace(/#1B66FF/g, '#101010');
 const runtime = [
   '/*! QRBTF browser runtime: react-qrbtf 1.2.1; React / ReactDOMServer 16.14.0. MIT licenses: qrbtf-LICENSES.txt */',
   await read('react-16.14.0.production.min.js'),
@@ -10,7 +13,8 @@ const runtime = [
   // The published qrbtf UMD build expects the lowercase browser global.
   'window.react = window.React;',
   await read('react-qrbtf-1.2.1.umd.js'),
-  'delete window.react;'
+  'delete window.react;',
+  `window.badgeQRLogoPaths = ${JSON.stringify(logoPaths)};`
 ].join('\n;\n');
 
 const licenses = await Promise.all([

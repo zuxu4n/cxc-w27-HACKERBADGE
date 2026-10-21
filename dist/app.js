@@ -1,7 +1,7 @@
 'use strict';
 
 const $ = (selector) => document.querySelector(selector);
-const defaults = { fullName: 'Lee Sang-hyeok', preferredName: 'Faker', teamName: 'T1 League of Legends', qrUrl: 'https://r.mtdv.me/z213yAoKQH' };
+const defaults = { fullName: 'Lee Sang-hyeok', preferredName: 'Faker', teamName: 'T1 League of Legends', qrUrl: 'https://r.mtdv.me/z213yAoKQH', qrStyle: 'cxc' };
 const form = $('#badge-form');
 const badge = $('#badge');
 const stage = $('#badge-stage');
@@ -76,7 +76,7 @@ function renderQR(value) {
   try {
     const url = new URL(value);
     if (!['https:', 'http:'].includes(url.protocol)) throw new Error('Unsupported protocol');
-    qrSVG = createBadgeQR(url.href);
+    qrSVG = createBadgeQR(url.href, state.qrStyle);
     $('#badge-qr').innerHTML = qrSVG;
     $('#large-qr').innerHTML = qrSVG;
     $('#scan-link').href = url.href;
@@ -103,6 +103,12 @@ form.addEventListener('submit', (event) => event.preventDefault());
 form.elements.qrUrl.addEventListener('input', (event) => {
   clearTimeout(qrTimeout);
   qrTimeout = setTimeout(() => renderQR(event.target.value.trim()), 200);
+});
+form.elements.qrStyle.addEventListener('change', (event) => {
+  state.qrStyle = event.target.value;
+  clearTimeout(qrTimeout);
+  renderQR(form.elements.qrUrl.value.trim());
+  $('#qr-style-status').textContent = `${event.target.selectedOptions[0].textContent} QR style selected.`;
 });
 
 function loadImage(src) {

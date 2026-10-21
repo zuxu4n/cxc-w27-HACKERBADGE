@@ -27,3 +27,9 @@ body{padding-bottom:calc(var(--footer-height) + env(safe-area-inset-bottom,0px))
 #toast{bottom:calc(var(--footer-height) + env(safe-area-inset-bottom,0px) + 16px)}
 @media(min-width:821px){.workspace{height:var(--workspace-height)}.editor{height:100%;min-height:0;overflow-y:auto}}
 .portrait-wrap img{--portrait-offset:8px;object-position:center calc(50% + var(--portrait-offset))}.photo-preview img{object-position:center calc(50% + 3px)}
+/* QR comparison controls share the existing preview toolbar. */
+.brand-title{font-size:19px;font-weight:700;letter-spacing:-.8px;color:var(--blue)}
+.qr-style-picker{display:flex;align-items:center;gap:8px}
+.qr-style-picker label{font:7px var(--mono);letter-spacing:.8px;color:#73736f}
+.qr-style-picker select{appearance:auto;min-width:109px;border:1px solid #cacac4;border-radius:3px;background:#f7f7f7b3;color:var(--ink);font:10px var(--mono);padding:7px 6px;cursor:pointer}
+@media(max-width:480px){.brand-title{font-size:18px}.qr-style-picker{gap:5px}.qr-style-picker label{font-size:6px}.qr-style-picker select{min-width:98px;font-size:9px;padding:6px 4px}}
