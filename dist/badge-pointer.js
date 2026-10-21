@@ -6,21 +6,26 @@ window.badgePointerPose = (event, bounds) => {
   const touch = event.pointerType === 'touch';
   // Give small touch movements more tilt, easing into the existing edge limits.
   const touchTilt = value => Math.sign(value) * (1 - (1 - Math.abs(value)) ** 3);
-  // Both touched edges move down on screen; the center stays flat.
+  // Rock through the center in the same direction as desktop hover.
   return {
-    x: touch ? Math.abs(touchTilt(y * 2 - 1)) * 12.75 : (.5 - y) * 17,
+    x: touch ? touchTilt(1 - y * 2) * 12.75 : (.5 - y) * 17,
     y: touch ? touchTilt(x * 2 - 1) * 15 : (x - .5) * 20,
     mx: x * 100,
     my: y * 100
   };
 };
 
-window.advanceBadgeMotion = (current, target, directTouch = false) => {
+window.advanceBadgeMotion = (current, target, touchActive = false, deltaMs = 1000 / 60) => {
   let moving = false;
+  // Light touch damping removes jitter without the longer desktop trailing motion.
+  // Normalize it to elapsed time so 60 Hz and 120 Hz phones feel the same.
+  const blend = touchActive
+    ? 1 - .55 ** (Math.max(0, Math.min(64, deltaMs)) / (1000 / 60))
+    : .12;
   for (const key of Object.keys(current)) {
-    // A held touch follows the latest sample without a trailing spring.
-    current[key] = directTouch ? target[key] : current[key] + (target[key] - current[key]) * .12;
+    current[key] += (target[key] - current[key]) * blend;
     if (Math.abs(target[key] - current[key]) > .015) moving = true;
+    else current[key] = target[key];
   }
   return moving;
 };

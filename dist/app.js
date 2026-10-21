@@ -156,7 +156,7 @@ function setHolo(enabled) {
   $('#holo-toggle').setAttribute('aria-pressed', String(enabled));
   $('#holo-toggle>span').textContent = enabled ? 'Holo on' : 'Holo off';
   if (!enabled) { resetBadgePointer(); }
-  else if (!reducedMotion.matches) { demoUntil = performance.now() + 4000; animate(); }
+  else if (!reducedMotion.matches) { animate(); }
 }
 $('#holo-toggle').addEventListener('click', () => setHolo(!state.holo));
 
@@ -165,6 +165,7 @@ function openScan() {
   if (!renderQR(form.elements.qrUrl.value.trim())) { toast('Add a valid QR destination first.'); return; }
   resetBadgePointer();
   dialog.showModal();
+  stage.classList.add('idle-paused');
 }
 $('#scan-button').addEventListener('click', openScan);
 $('#qr-tile').addEventListener('click', openScan);
@@ -185,13 +186,13 @@ $('#reset-button').addEventListener('click', () => {
   toast('Sample details restored.');
 });
 
-// Touch follows the finger immediately; hover and release keep the spring easing.
+// Touch uses light damping; hover and release keep the slower spring easing.
 const target = { x: 0, y: 0, mx: 62, my: 33 };
 const current = { x: 0, y: 0, mx: 62, my: 33 };
 let activePointer = false;
-let directTouch = false;
+let touchActive = false;
 let frame = 0;
-let demoUntil = 0;
+let previousFrameTime = 0;
 
 function animate() {
   if (frame || document.hidden) return;
@@ -200,26 +201,23 @@ function animate() {
 
 function tick(time) {
   frame = 0;
-  const demo = !activePointer && time < demoUntil && state.holo && !reducedMotion.matches && !dialog.open;
-  if (demo) {
-    const t = time / 1300;
-    target.x = Math.sin(t) * 3;
-    target.y = Math.cos(t) * 4;
-    target.mx = 50 + Math.cos(t) * 29;
-    target.my = 45 + Math.sin(t) * 25;
-  } else if (!activePointer) {
+  const deltaMs = previousFrameTime ? time - previousFrameTime : 1000 / 60;
+  previousFrameTime = time;
+  // Idle motion belongs to the CSS wrapper; this loop only handles user input.
+  if (!activePointer) {
     target.x = target.y = 0;
     target.mx = 62;
     target.my = 33;
   }
-  const moving = advanceBadgeMotion(current, target, activePointer && directTouch);
+  const moving = advanceBadgeMotion(current, target, activePointer && touchActive, deltaMs);
   badge.style.setProperty('--rx', `${current.x.toFixed(3)}deg`);
   badge.style.setProperty('--ry', `${current.y.toFixed(3)}deg`);
   badge.style.setProperty('--mx', `${current.mx.toFixed(2)}%`);
   badge.style.setProperty('--my', `${current.my.toFixed(2)}%`);
   badge.style.setProperty('--bx', `${(100 - current.mx).toFixed(2)}%`);
   badge.style.setProperty('--by', `${(100 - current.my).toFixed(2)}%`);
-  if (moving || demo) animate();
+  if (moving) animate();
+  else previousFrameTime = 0;
 }
 
 const resetBadgePointer = bindBadgePointer({
@@ -227,20 +225,28 @@ const resetBadgePointer = bindBadgePointer({
   canInteract: () => state.holo && !reducedMotion.matches && !dialog.open,
   onMove: (event) => {
     activePointer = true;
-    directTouch = event.pointerType === 'touch';
-    demoUntil = 0;
+    touchActive = event.pointerType === 'touch';
     Object.assign(target, badgePointerPose(event, stage.getBoundingClientRect()));
     animate();
   },
-  onRelease: () => { activePointer = false; directTouch = false; demoUntil = 0; animate(); }
+  onRelease: () => {
+    activePointer = false;
+    touchActive = false;
+    stage.classList.remove('keyboard-active');
+    animate();
+  }
+});
+dialog.addEventListener('close', () => {
+  stage.classList.remove('idle-paused');
+  animate();
 });
 badge.addEventListener('keydown', (event) => {
   if (!state.holo || reducedMotion.matches) return;
   if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Escape'].includes(event.key)) return;
   event.preventDefault();
-  directTouch = false;
+  touchActive = false;
   activePointer = event.key !== 'Escape';
-  demoUntil = 0;
+  stage.classList.toggle('keyboard-active', activePointer);
   const delta = 3;
   if (event.key === 'ArrowUp') target.x = Math.min(9, target.x + delta);
   if (event.key === 'ArrowDown') target.x = Math.max(-9, target.x - delta);
@@ -250,9 +256,12 @@ badge.addEventListener('keydown', (event) => {
   target.my = 50 - target.x * 4;
   animate();
 });
+badge.addEventListener('keyup', (event) => {
+  if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) resetBadgePointer();
+});
 window.addEventListener('blur', resetBadgePointer);
 badge.addEventListener('focusout', (event) => { if (!badge.contains(event.relatedTarget)) resetBadgePointer(); });
-document.addEventListener('visibilitychange', () => { if (document.hidden) { resetBadgePointer(); cancelAnimationFrame(frame); frame = 0; } else animate(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden) { resetBadgePointer(); cancelAnimationFrame(frame); frame = 0; previousFrameTime = 0; } else animate(); });
 reducedMotion.addEventListener('change', (event) => { if (event.matches) setHolo(false); });
 
 // Canvas export keeps the QR crisp and embeds all artwork in a portable PNG.

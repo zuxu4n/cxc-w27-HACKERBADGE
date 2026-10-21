@@ -50,3 +50,41 @@ body{padding-bottom:calc(var(--footer-height) + env(safe-area-inset-bottom,0px))
 /* The scale wrapper must not sit in front of rotated card hit targets. */
 .badge-scaler{pointer-events:none}
 .badge{pointer-events:auto}
+/* Keep depth proportional to the rendered card, with a closer view on touch. */
+@media(hover:none) and (pointer:coarse){
+  .badge-stage{perspective:calc(1100px * var(--badge-scale))}
+}
+/* Native idle motion keeps running when the input animation-frame loop settles. */
+.badge-idle{width:392px;height:592px;transform-style:preserve-3d;will-change:transform;animation:badge-idle-sway 8s linear infinite}
+.badge-idle .foil-rainbow{animation:badge-idle-foil 8s linear infinite}
+.badge-stage:active .badge-idle,.badge-stage.idle-paused .badge-idle,.badge-stage.keyboard-active .badge-idle{animation-play-state:paused}
+.badge-stage:active .foil-rainbow,.badge-stage.idle-paused .foil-rainbow,.badge-stage.keyboard-active .foil-rainbow,.badge-stage.motion-disabled .foil-rainbow{animation:none}
+.badge-stage.motion-disabled .badge-idle{animation:none;transform:none;will-change:auto}
+@media(hover:hover) and (pointer:fine){
+  .badge-stage:hover .badge-idle{animation-play-state:paused}
+  .badge-stage:hover .foil-rainbow{animation:none}
+}
+@keyframes badge-idle-sway{
+  0%,100%{transform:translateY(0) rotateX(0deg) rotateY(5deg) rotateZ(-.8deg)}
+  6.25%{transform:translateY(-1.531px) rotateX(1.339deg) rotateY(4.619deg) rotateZ(-.739deg)}
+  12.5%{transform:translateY(-2.828px) rotateX(2.475deg) rotateY(3.536deg) rotateZ(-.566deg)}
+  18.75%{transform:translateY(-3.696px) rotateX(3.234deg) rotateY(1.913deg) rotateZ(-.306deg)}
+  25%{transform:translateY(-4px) rotateX(3.5deg) rotateY(0deg) rotateZ(0deg)}
+  31.25%{transform:translateY(-3.696px) rotateX(3.234deg) rotateY(-1.913deg) rotateZ(.306deg)}
+  37.5%{transform:translateY(-2.828px) rotateX(2.475deg) rotateY(-3.536deg) rotateZ(.566deg)}
+  43.75%{transform:translateY(-1.531px) rotateX(1.339deg) rotateY(-4.619deg) rotateZ(.739deg)}
+  50%{transform:translateY(0) rotateX(0deg) rotateY(-5deg) rotateZ(.8deg)}
+  56.25%{transform:translateY(1.531px) rotateX(-1.339deg) rotateY(-4.619deg) rotateZ(.739deg)}
+  62.5%{transform:translateY(2.828px) rotateX(-2.475deg) rotateY(-3.536deg) rotateZ(.566deg)}
+  68.75%{transform:translateY(3.696px) rotateX(-3.234deg) rotateY(-1.913deg) rotateZ(.306deg)}
+  75%{transform:translateY(4px) rotateX(-3.5deg) rotateY(0deg) rotateZ(0deg)}
+  81.25%{transform:translateY(3.696px) rotateX(-3.234deg) rotateY(1.913deg) rotateZ(-.306deg)}
+  87.5%{transform:translateY(2.828px) rotateX(-2.475deg) rotateY(3.536deg) rotateZ(-.566deg)}
+  93.75%{transform:translateY(1.531px) rotateX(-1.339deg) rotateY(4.619deg) rotateZ(-.739deg)}
+}
+@keyframes badge-idle-foil{
+  0%,100%{background-position:30% 67%}
+  25%{background-position:38% 61%}
+  50%{background-position:46% 67%}
+  75%{background-position:38% 73%}
+}

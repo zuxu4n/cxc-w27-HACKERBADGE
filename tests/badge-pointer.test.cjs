@@ -127,19 +127,41 @@ test('disabled motion does not start a gesture', () => {
   assert.equal(h.stage.hasPointerCapture(1), false);
 });
 
-test('touch reaches the requested pose on the next frame, then eases on release', () => {
+test('touch follows promptly with light damping, then eases on release', () => {
   const context = { window: {} };
   vm.runInNewContext(source, context);
   const { advanceBadgeMotion } = context.window;
   const pose = { x: 6, y: 9, mx: 80, my: 20 };
   const touch = { x: 0, y: 0, mx: 50, my: 50 };
-  assert.equal(advanceBadgeMotion(touch, pose, true), false);
-  assert.deepEqual(touch, pose);
-  advanceBadgeMotion(touch, { x: 0, y: 0, mx: 62, my: 33 });
+  assert.equal(advanceBadgeMotion(touch, pose, true), true);
   assert.ok(touch.x > 0 && touch.x < pose.x);
+  assert.ok(touch.y > 0 && touch.y < pose.y);
+  for (let frame = 1; frame < 6; frame++) advanceBadgeMotion(touch, pose, true);
+  assert.ok(touch.x > pose.x * .97 && touch.x < pose.x);
+  const beforeRelease = touch.x;
+  advanceBadgeMotion(touch, { x: 0, y: 0, mx: 62, my: 33 });
+  assert.ok(touch.x > 0 && touch.x < beforeRelease);
   const hover = { x: 0, y: 0, mx: 50, my: 50 };
   assert.equal(advanceBadgeMotion(hover, pose), true);
   assert.ok(hover.y > 0 && hover.y < pose.y);
+  assert.ok(Math.abs(hover.y - pose.y * .12) < 1e-12);
+  let moving = true;
+  for (let frame = 0; frame < 100 && moving; frame++) moving = advanceBadgeMotion(touch, pose, true);
+  assert.equal(moving, false);
+  assert.deepEqual(touch, pose);
+});
+
+test('touch smoothing has the same response at 60 Hz and 120 Hz', () => {
+  const context = { window: {} };
+  vm.runInNewContext(source, context);
+  const pose = { x: -12.75, y: 15, mx: 90, my: 10 };
+  const run = hz => {
+    const current = { x: 0, y: 0, mx: 50, my: 50 };
+    for (let frame = 0; frame < hz / 10; frame++) context.window.advanceBadgeMotion(current, pose, true, 1000 / hz);
+    return current;
+  };
+  const normal = run(60), fast = run(120);
+  for (const key of Object.keys(pose)) assert.ok(Math.abs(normal[key] - fast[key]) < 1e-10, key);
 });
 
 test('small touch movements have strong tilt along either centerline without moving the light', () => {
@@ -179,12 +201,12 @@ test('touch response stays continuous, symmetric, and bounded from the center to
     const bottom = pose(150, 225 + offset * 225);
     const top = pose(150, 225 - offset * 225);
     assert.ok(right.y >= previousY && right.y <= 15);
-    assert.ok(bottom.x >= previousX && bottom.x <= 12.75);
+    assert.ok(-bottom.x >= previousX && -bottom.x <= 12.75);
     assert.ok(right.y - previousY < .5);
-    assert.ok(bottom.x - previousX < .4);
+    assert.ok(-bottom.x - previousX < .4);
     assert.ok(Math.abs(right.y + left.y) < 1e-12);
-    assert.ok(Math.abs(top.x - bottom.x) < 1e-12);
-    previousX = bottom.x;
+    assert.ok(Math.abs(top.x + bottom.x) < 1e-12);
+    previousX = -bottom.x;
     previousY = right.y;
   }
   assert.equal(previousX, 12.75);
@@ -200,27 +222,21 @@ test('desktop hover keeps its original linear tilt', () => {
   assert.equal(mouse.y, -6);
 });
 
-test('touching either edge moves it down on screen without reversing horizontal movement', () => {
+test('touch rocks in opposite directions across the center like desktop hover', () => {
   const context = { window: {} };
   vm.runInNewContext(source, context);
   const bounds = { left: 0, top: 0, width: 300, height: 450 };
   const pose = (clientX, clientY, pointerType = 'touch') => context.window.badgePointerPose({ clientX, clientY, pointerType }, bounds);
   const bottom = pose(150, 375);
   const top = pose(150, 75);
-  assert.ok(bottom.x > 0);
+  assert.ok(bottom.x < 0);
   assert.ok(top.x > 0);
   assert.equal(pose(150, 225).x, 0);
   assert.ok(pose(250, 225).y > 0);
   assert.ok(pose(50, 225).y < 0);
   assert.ok(pose(150, 375, 'mouse').x < 0);
-  // Under the card's perspective, the bottom edge projects lower on screen.
-  const halfHeight = bounds.height / 2;
-  const radians = bottom.x * Math.PI / 180;
-  const projectedBottom = halfHeight * Math.cos(radians) / (1 - halfHeight * Math.sin(radians) / 1400);
-  assert.ok(projectedBottom > halfHeight);
-  const topRadians = top.x * Math.PI / 180;
-  const projectedTop = -halfHeight * Math.cos(topRadians) / (1 + halfHeight * Math.sin(topRadians) / 1400);
-  assert.ok(projectedTop > -halfHeight);
+  assert.ok(pose(150, 75, 'mouse').x > 0);
+  assert.equal(top.x, -bottom.x);
 });
 
 test('badge decoration uses vector icons in the page and PNG exporter', () => {
