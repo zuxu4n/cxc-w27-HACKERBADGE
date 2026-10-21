@@ -1,7 +1,7 @@
 'use strict';
 
 const $ = (selector) => document.querySelector(selector);
-const defaults = { fullName: 'Lee Sang-hyeok', preferredName: 'Faker', teamName: 'T1 League of Legends', qrUrl: 'https://example.com/badge/CXC-042' };
+const defaults = { fullName: 'Lee Sang-hyeok', preferredName: 'Faker', teamName: 'T1 League of Legends', qrUrl: 'https://r.mtdv.me/z213yAoKQH' };
 const form = $('#badge-form');
 const badge = $('#badge');
 const stage = $('#badge-stage');
@@ -85,7 +85,7 @@ function renderQR(value) {
     $('#scan-link').href = url.href;
     $('#qr-error').hidden = true;
     $('#qr-url').setAttribute('aria-invalid', 'false');
-    const sample = value === defaults.qrUrl;
+    const sample = url.hostname === 'example.com';
     $('.scan-demo-note').hidden = !sample;
     state.qrUrl = value;
     return true;
@@ -316,16 +316,18 @@ async function exportBadge() {
     text('CALL ME', 26, preferredY, 8, '#101010', 'Atkinson, monospace');
     text((state.preferredName.trim() || fullName.split(' ')[0]).toUpperCase(), 72, preferredY, 10, '#1b66ff', 'Atkinson, monospace', 600);
     ctx.save(); ctx.filter = 'grayscale(1)';
+    ctx.beginPath(); ctx.rect(272, 113, 94, 113); ctx.clip();
     const portraitBackdrop = ctx.createLinearGradient(366, 113, 272, 226);
     portraitBackdrop.addColorStop(0, '#868686');
     portraitBackdrop.addColorStop(.42, '#999999');
     portraitBackdrop.addColorStop(1, '#c5c5c5');
     ctx.fillStyle = portraitBackdrop;
     ctx.fillRect(272, 113, 94, 113);
-    const photoRatio = 94 / 113;
-    let sw = photo.width, sh = photo.height;
-    if (sw / sh > photoRatio) sw = sh * photoRatio; else sh = sw / photoRatio;
-    ctx.drawImage(photo, (photo.width - sw) / 2, (photo.height - sh) / 2, sw, sh, 272, 113, 94, 113);
+    const photoScale = Math.max(94 / photo.width, 113 / photo.height);
+    const photoWidth = photo.width * photoScale;
+    const photoHeight = photo.height * photoScale;
+    const portraitOffset = parseFloat(getComputedStyle($('#badge-photo')).getPropertyValue('--portrait-offset')) || 0;
+    ctx.drawImage(photo, 272 + (94 - photoWidth) / 2, 113 + (113 - photoHeight) / 2 + portraitOffset, photoWidth, photoHeight);
     ctx.restore();
     ctx.strokeStyle = '#1b66ff'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(357, 109); ctx.lineTo(370, 109); ctx.lineTo(370, 122); ctx.stroke();
     text('H / 042', 336, 239, 6, '#85857f', 'Atkinson, monospace');

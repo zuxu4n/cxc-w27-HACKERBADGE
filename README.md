@@ -4,7 +4,7 @@ A buildless HTML, CSS, and JavaScript badge lab. Run `npm run dev` from this dir
 
 The badge includes editable full/preferred names, a profile-photo upload, the Hacker role, a team name, a locally generated QR, pointer/touch/keyboard tilt, rainbow foil and sparkles, an accessible scan dialog, and a 1176 × 1776 PNG download. The QR stays above the foil so its contrast is preserved. Motion follows the operating system's reduced-motion preference. Details and uploaded photos stay in the current browser session; there is no backend or attendee database.
 
-Lee Sang-hyeok, T1 League of Legends, and the example.com QR destination are sample data. Set the QR destination to a real profile or check-in URL before using the badge at an event. This prototype does not issue or validate admission credentials.
+The default badge uses Lee Sang-hyeok, the nickname Faker, T1 League of Legends, and the supplied QR destination https://r.mtdv.me/z213yAoKQH. The QR destination remains editable. This prototype does not issue or validate admission credentials.
 
 ## Credits
 

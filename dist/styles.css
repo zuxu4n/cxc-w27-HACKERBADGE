@@ -23,3 +23,4 @@ body{padding-bottom:calc(var(--footer-height) + env(safe-area-inset-bottom,0px))
 .site-footer{position:fixed;left:0;right:0;bottom:0;z-index:30;max-width:none;width:100%;height:calc(var(--footer-height) + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);background:var(--paper)}
 #toast{bottom:calc(var(--footer-height) + env(safe-area-inset-bottom,0px) + 16px)}
 @media(min-width:821px){.workspace{height:var(--workspace-height)}.editor{height:100%;min-height:0;overflow-y:auto}}
+.portrait-wrap img{--portrait-offset:8px;object-position:center calc(50% + var(--portrait-offset))}.photo-preview img{object-position:center calc(50% + 3px)}
