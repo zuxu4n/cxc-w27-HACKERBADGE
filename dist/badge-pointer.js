@@ -4,10 +4,15 @@ window.badgePointerPose = (event, bounds) => {
   const x = Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width));
   const y = Math.max(0, Math.min(1, (event.clientY - bounds.top) / bounds.height));
   const touch = event.pointerType === 'touch';
-  const sensitivity = touch ? 1.5 : 1;
+  // Give small touch movements more tilt, easing into the existing edge limits.
+  const touchTilt = value => Math.sign(value) * (1 - (1 - Math.abs(value)) ** 3);
   // Both touched edges move down on screen; the center stays flat.
-  const vertical = touch ? Math.abs(y - .5) : .5 - y;
-  return { x: vertical * 17 * sensitivity, y: (x - .5) * 20 * sensitivity, mx: x * 100, my: y * 100 };
+  return {
+    x: touch ? Math.abs(touchTilt(y * 2 - 1)) * 12.75 : (.5 - y) * 17,
+    y: touch ? touchTilt(x * 2 - 1) * 15 : (x - .5) * 20,
+    mx: x * 100,
+    my: y * 100
+  };
 };
 
 window.advanceBadgeMotion = (current, target, directTouch = false) => {

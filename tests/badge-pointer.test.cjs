@@ -142,19 +142,62 @@ test('touch reaches the requested pose on the next frame, then eases on release'
   assert.ok(hover.y > 0 && hover.y < pose.y);
 });
 
-test('short touch drags produce stronger bounded tilt without changing the light position', () => {
+test('small touch movements have strong tilt along either centerline without moving the light', () => {
   const context = { window: {} };
   vm.runInNewContext(source, context);
   const bounds = { left: 10, top: 20, width: 300, height: 450 };
   const point = { clientX: 190, clientY: 200 };
   const touch = context.window.badgePointerPose({ ...point, pointerType: 'touch' }, bounds);
   const mouse = context.window.badgePointerPose({ ...point, pointerType: 'mouse' }, bounds);
-  assert.equal(touch.y, mouse.y * 1.5);
-  assert.equal(Math.abs(touch.x), Math.abs(mouse.x) * 1.5);
+  // A 10% movement now produces nearly half the available tilt, over twice before.
+  assert.ok(touch.y > 7 && touch.y < 8);
+  assert.ok(touch.x > 6 && touch.x < 7);
+  assert.ok(touch.y > mouse.y * 1.5 * 2);
+  assert.ok(touch.x > Math.abs(mouse.x) * 1.5 * 2);
   assert.equal(touch.mx, mouse.mx);
   assert.equal(touch.my, mouse.my);
+  const horizontal = context.window.badgePointerPose({ clientX: 190, clientY: 245, pointerType: 'touch' }, bounds);
+  const vertical = context.window.badgePointerPose({ clientX: 160, clientY: 200, pointerType: 'touch' }, bounds);
+  assert.equal(horizontal.y, touch.y);
+  assert.equal(horizontal.x, 0);
+  assert.equal(vertical.x, touch.x);
+  assert.equal(vertical.y, 0);
   const edge = context.window.badgePointerPose({ clientX: 1000, clientY: -1000, pointerType: 'touch' }, bounds);
   assert.ok(Math.abs(edge.x) <= 12.75 && Math.abs(edge.y) <= 15);
+});
+
+test('touch response stays continuous, symmetric, and bounded from the center to every edge', () => {
+  const context = { window: {} };
+  vm.runInNewContext(source, context);
+  const bounds = { left: 0, top: 0, width: 300, height: 450 };
+  const pose = (x, y) => context.window.badgePointerPose({ clientX: x, clientY: y, pointerType: 'touch' }, bounds);
+  let previousX = 0, previousY = 0;
+  for (let step = 0; step <= 100; step++) {
+    const offset = step / 100;
+    const right = pose(150 + offset * 150, 225);
+    const left = pose(150 - offset * 150, 225);
+    const bottom = pose(150, 225 + offset * 225);
+    const top = pose(150, 225 - offset * 225);
+    assert.ok(right.y >= previousY && right.y <= 15);
+    assert.ok(bottom.x >= previousX && bottom.x <= 12.75);
+    assert.ok(right.y - previousY < .5);
+    assert.ok(bottom.x - previousX < .4);
+    assert.ok(Math.abs(right.y + left.y) < 1e-12);
+    assert.ok(Math.abs(top.x - bottom.x) < 1e-12);
+    previousX = bottom.x;
+    previousY = right.y;
+  }
+  assert.equal(previousX, 12.75);
+  assert.equal(previousY, 15);
+});
+
+test('desktop hover keeps its original linear tilt', () => {
+  const context = { window: {} };
+  vm.runInNewContext(source, context);
+  const bounds = { left: 0, top: 0, width: 300, height: 450 };
+  const mouse = context.window.badgePointerPose({ clientX: 60, clientY: 135, pointerType: 'mouse' }, bounds);
+  assert.ok(Math.abs(mouse.x - 3.4) < 1e-12);
+  assert.equal(mouse.y, -6);
 });
 
 test('touching either edge moves it down on screen without reversing horizontal movement', () => {
