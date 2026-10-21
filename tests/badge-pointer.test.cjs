@@ -150,21 +150,23 @@ test('short touch drags produce stronger bounded tilt without changing the light
   const touch = context.window.badgePointerPose({ ...point, pointerType: 'touch' }, bounds);
   const mouse = context.window.badgePointerPose({ ...point, pointerType: 'mouse' }, bounds);
   assert.equal(touch.y, mouse.y * 1.5);
-  assert.equal(touch.x, -mouse.x * 1.5);
+  assert.equal(Math.abs(touch.x), Math.abs(mouse.x) * 1.5);
   assert.equal(touch.mx, mouse.mx);
   assert.equal(touch.my, mouse.my);
   const edge = context.window.badgePointerPose({ clientX: 1000, clientY: -1000, pointerType: 'touch' }, bounds);
   assert.ok(Math.abs(edge.x) <= 12.75 && Math.abs(edge.y) <= 15);
 });
 
-test('touching the bottom tips it down without reversing horizontal movement', () => {
+test('touching either edge moves it down on screen without reversing horizontal movement', () => {
   const context = { window: {} };
   vm.runInNewContext(source, context);
   const bounds = { left: 0, top: 0, width: 300, height: 450 };
   const pose = (clientX, clientY, pointerType = 'touch') => context.window.badgePointerPose({ clientX, clientY, pointerType }, bounds);
   const bottom = pose(150, 375);
+  const top = pose(150, 75);
   assert.ok(bottom.x > 0);
-  assert.ok(pose(150, 75).x < 0);
+  assert.ok(top.x > 0);
+  assert.equal(pose(150, 225).x, 0);
   assert.ok(pose(250, 225).y > 0);
   assert.ok(pose(50, 225).y < 0);
   assert.ok(pose(150, 375, 'mouse').x < 0);
@@ -173,6 +175,9 @@ test('touching the bottom tips it down without reversing horizontal movement', (
   const radians = bottom.x * Math.PI / 180;
   const projectedBottom = halfHeight * Math.cos(radians) / (1 - halfHeight * Math.sin(radians) / 1400);
   assert.ok(projectedBottom > halfHeight);
+  const topRadians = top.x * Math.PI / 180;
+  const projectedTop = -halfHeight * Math.cos(topRadians) / (1 + halfHeight * Math.sin(topRadians) / 1400);
+  assert.ok(projectedTop > -halfHeight);
 });
 
 test('badge decoration uses vector icons in the page and PNG exporter', () => {

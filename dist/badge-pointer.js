@@ -5,7 +5,8 @@ window.badgePointerPose = (event, bounds) => {
   const y = Math.max(0, Math.min(1, (event.clientY - bounds.top) / bounds.height));
   const touch = event.pointerType === 'touch';
   const sensitivity = touch ? 1.5 : 1;
-  const vertical = touch ? y - .5 : .5 - y;
+  // Both touched edges move down on screen; the center stays flat.
+  const vertical = touch ? Math.abs(y - .5) : .5 - y;
   return { x: vertical * 17 * sensitivity, y: (x - .5) * 20 * sensitivity, mx: x * 100, my: y * 100 };
 };
 
