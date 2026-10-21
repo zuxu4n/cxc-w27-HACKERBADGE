@@ -1,7 +1,7 @@
 'use strict';
 
 // All looks share QRBTF's encoder, high error correction, and a four-module quiet zone.
-window.createBadgeQR = (value, style = 'cxc') => {
+window.createBadgeQR = (value, style = 'classic') => {
   const qrbtf = window['react-qrbtf'];
   const code = qrbtf.encodeData({ text: value, correctLevel: 'H', typeNumber: -1 });
   const branded = style === 'cxc';

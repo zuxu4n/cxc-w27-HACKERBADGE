@@ -1,7 +1,7 @@
 'use strict';
 
 const $ = (selector) => document.querySelector(selector);
-const defaults = { fullName: 'Lee Sang-hyeok', preferredName: 'Faker', teamName: 'T1 League of Legends', qrUrl: 'https://r.mtdv.me/z213yAoKQH', qrStyle: 'cxc' };
+const defaults = { fullName: 'Lee Sang-hyeok', preferredName: 'Faker', teamName: 'T1 League of Legends', qrUrl: 'https://r.mtdv.me/z213yAoKQH', qrStyle: 'classic' };
 const form = $('#badge-form');
 const badge = $('#badge');
 const stage = $('#badge-stage');
