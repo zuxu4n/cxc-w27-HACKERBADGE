@@ -149,12 +149,25 @@ test('short touch drags produce stronger bounded tilt without changing the light
   const point = { clientX: 190, clientY: 200 };
   const touch = context.window.badgePointerPose({ ...point, pointerType: 'touch' }, bounds);
   const mouse = context.window.badgePointerPose({ ...point, pointerType: 'mouse' }, bounds);
-  assert.equal(touch.y, mouse.y * 1.5);
-  assert.equal(touch.x, mouse.x * 1.5);
+  assert.equal(Math.abs(touch.y), Math.abs(mouse.y) * 1.5);
+  assert.equal(Math.abs(touch.x), Math.abs(mouse.x) * 1.5);
   assert.equal(touch.mx, mouse.mx);
   assert.equal(touch.my, mouse.my);
   const edge = context.window.badgePointerPose({ clientX: 1000, clientY: -1000, pointerType: 'touch' }, bounds);
-  assert.ok(edge.x <= 12.75 && edge.y <= 15);
+  assert.ok(Math.abs(edge.x) <= 12.75 && Math.abs(edge.y) <= 15);
+});
+
+test('touch tilt uses the corrected direction on both axes', () => {
+  const context = { window: {} };
+  vm.runInNewContext(source, context);
+  const bounds = { left: 0, top: 0, width: 300, height: 450 };
+  const touch = (clientX, clientY) => context.window.badgePointerPose({ clientX, clientY, pointerType: 'touch' }, bounds);
+  assert.ok(touch(250, 225).y < 0, 'right drag');
+  assert.ok(touch(50, 225).y > 0, 'left drag');
+  assert.ok(touch(150, 375).x > 0, 'down drag');
+  assert.ok(touch(150, 75).x < 0, 'up drag');
+  const mouse = context.window.badgePointerPose({ clientX: 250, clientY: 225, pointerType: 'mouse' }, bounds);
+  assert.ok(mouse.y > 0, 'desktop hover keeps its direction');
 });
 
 test('badge decoration uses vector icons in the page and PNG exporter', () => {
