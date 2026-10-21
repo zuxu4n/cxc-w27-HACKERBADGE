@@ -18,7 +18,10 @@ body{padding-bottom:calc(var(--footer-height) + env(safe-area-inset-bottom,0px))
 .editor{padding-top:24px}
 .preview{--badge-scale:.78;height:var(--workspace-height);min-height:0;flex-shrink:0;padding-top:24px;padding-bottom:52px}
 .badge-stage{width:calc(392px * var(--badge-scale));height:calc(592px * var(--badge-scale));margin-top:40px}
-.badge{transform:scale(var(--badge-scale)) rotateX(var(--rx)) rotateY(var(--ry));transform-origin:top left}
+.badge-scaler{width:392px;height:592px;transform:scale(var(--badge-scale));transform-origin:top left;transform-style:preserve-3d}
+.badge{transform:rotateX(var(--rx)) rotateY(var(--ry));transform-origin:center}
+.badge-stage:hover .badge:not(.holo-off) .foil-rainbow{opacity:.46}
+.badge-stage:hover .badge:not(.holo-off) .foil-sparkles{opacity:.48;filter:brightness(1.7)}
 .preview-controls{margin-top:22px}
 .site-footer{position:fixed;left:0;right:0;bottom:0;z-index:30;max-width:none;width:100%;height:calc(var(--footer-height) + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);background:var(--paper)}
 #toast{bottom:calc(var(--footer-height) + env(safe-area-inset-bottom,0px) + 16px)}
