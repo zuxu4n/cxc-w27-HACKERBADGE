@@ -76,10 +76,7 @@ function renderQR(value) {
   try {
     const url = new URL(value);
     if (!['https:', 'http:'].includes(url.protocol)) throw new Error('Unsupported protocol');
-    const qr = qrcode(0, 'M');
-    qr.addData(url.href);
-    qr.make();
-    qrSVG = qr.createSvgTag({ cellSize: 5, margin: 20, scalable: true }).replace('<svg ', '<svg role="img" aria-label="QR code for your badge destination" ');
+    qrSVG = createBadgeQR(url.href);
     $('#badge-qr').innerHTML = qrSVG;
     $('#large-qr').innerHTML = qrSVG;
     $('#scan-link').href = url.href;
