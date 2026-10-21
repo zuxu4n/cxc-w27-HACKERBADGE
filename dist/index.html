@@ -10,11 +10,14 @@
   <link rel="stylesheet" href="styles.css">
   <script defer src="assets/qrbtf-runtime.js"></script>
   <script defer src="qrbtf.js"></script>
+  <script defer src="badge-pointer.js"></script>
   <script defer src="app.js"></script>
 </head>
 <body>
   <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 19 19 5M5 5h14v14"/></symbol>
+    <symbol id="i-asterisk" viewBox="0 0 24 24"><path d="M12 2v20M2 12h20M5 5l14 14M5 19 19 5"/></symbol>
+    <symbol id="i-chevrons" viewBox="0 0 24 24"><path d="m12 4-8 8 8 8M21 4l-8 8 8 8"/></symbol>
     <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></symbol>
     <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4m-5 5 5-5 5 5M4 17v4h16v-4"/></symbol>
     <symbol id="i-scan" viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M3 12h18"/></symbol>
@@ -57,16 +60,16 @@
 
       <div class="badge-stage" id="badge-stage">
         <div class="badge-scaler">
-        <article class="badge" id="badge" tabindex="0" aria-label="Holographic hacker badge for Lee Sang-hyeok. Use arrow keys to tilt.">
+        <article class="badge" id="badge" tabindex="0" aria-label="Holographic hacker badge for Lee Sang-hyeok. Drag to tilt, or use arrow keys.">
           <div class="badge-surface">
             <div class="badge-grid" aria-hidden="true"></div>
             <div class="badge-header"><span class="badge-logo-window"><img src="assets/cxc-logo.svg" width="342.983" height="100.188" alt="CxC"></span><div class="badge-edition">WINTER 2027<br><strong>HACKATHON / W27</strong></div></div>
-            <div class="badge-identity"><div class="name-area"><span class="badge-micro">HELLO, WORLD. I’M</span><h2 id="badge-name">Lee<br>Sang-hyeok</h2><p class="preferred-label">CALL ME <strong id="badge-preferred">FAKER</strong><span class="small-arrow">↗</span></p></div><div class="portrait-wrap"><img id="badge-photo" src="assets/faker.png" alt="Profile photo of Lee Sang-hyeok"><span class="portrait-corner" aria-hidden="true"></span><span class="portrait-index">H / 042</span></div></div>
-            <div class="role-band"><span class="role-star" aria-hidden="true">✳</span><span>HACKER</span><span class="role-chevrons" aria-hidden="true">≪</span></div>
+            <div class="badge-identity"><div class="name-area"><span class="badge-micro">HELLO, WORLD. I’M</span><h2 id="badge-name">Lee<br>Sang-hyeok</h2><p class="preferred-label">CALL ME <strong id="badge-preferred">FAKER</strong><span class="small-arrow" aria-hidden="true"><svg class="icon"><use href="#i-arrow"/></svg></span></p></div><div class="portrait-wrap"><img id="badge-photo" src="assets/faker.png" alt="Profile photo of Lee Sang-hyeok"><span class="portrait-corner" aria-hidden="true"></span><span class="portrait-index">H / 042</span></div></div>
+            <div class="role-band"><span class="role-star" aria-hidden="true"><svg class="icon"><use href="#i-asterisk"/></svg></span><span>HACKER</span><span class="role-chevrons" aria-hidden="true"><svg class="icon"><use href="#i-chevrons"/></svg></span></div>
             <div class="team-row"><span class="badge-micro">BUILDING WITH</span><span id="badge-team">T1 League of Legends</span><svg class="icon"><use href="#i-arrow"/></svg></div>
             <div class="terrain-wrap" aria-hidden="true"><img class="badge-terrain" src="assets/cxc-terrain.png" alt=""><div class="terrain-fade"></div></div>
             <div class="badge-lower-copy"><span class="lower-plus">+</span><span>CURIOUS MINDS.<br>UNCHARTED<br>TERRITORY.</span><span class="lower-coordinates">43.4723° N<br>80.5449° W</span></div>
-            <div class="badge-footer"><span>CXC—W27—042</span><span>GO MAKE SOMETHING. ↗</span></div>
+            <div class="badge-footer"><span>CXC—W27—042</span><span class="badge-footer-message">GO MAKE SOMETHING. <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
           <div class="foil foil-rainbow" aria-hidden="true"></div><div class="foil foil-sparkles" aria-hidden="true"></div><div class="foil foil-glare" aria-hidden="true"></div><div class="badge-rim" aria-hidden="true"></div>
           <button id="qr-tile" class="qr-tile" type="button" aria-label="Enlarge QR code for scanning"><span class="qr-corner corner-tl"></span><span class="qr-corner corner-tr"></span><span class="qr-corner corner-bl"></span><span class="qr-corner corner-br"></span><span id="badge-qr"></span><span class="qr-caption">SCAN TO CONNECT <svg class="icon"><use href="#i-arrow"/></svg></span></button>

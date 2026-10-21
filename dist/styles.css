@@ -33,3 +33,20 @@ body{padding-bottom:calc(var(--footer-height) + env(safe-area-inset-bottom,0px))
 .qr-style-picker label{font:7px var(--mono);letter-spacing:.8px;color:#73736f}
 .qr-style-picker select{appearance:auto;min-width:109px;border:1px solid #cacac4;border-radius:3px;background:#f7f7f7b3;color:var(--ink);font:10px var(--mono);padding:7px 6px;cursor:pointer}
 @media(max-width:480px){.brand-title{font-size:18px}.qr-style-picker{gap:5px}.qr-style-picker label{font-size:6px}.qr-style-picker select{min-width:98px;font-size:9px;padding:6px 4px}}
+/* Own card gestures without intercepting page scrolling elsewhere. */
+.badge-stage{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.badge-stage.motion-disabled{touch-action:pan-y pinch-zoom}
+.badge-stage img{-webkit-user-drag:none;pointer-events:none}
+.badge-stage.is-interacting .badge:not(.holo-off) .foil-rainbow{opacity:.46}
+.badge-stage.is-interacting .badge:not(.holo-off) .foil-sparkles{opacity:.48;filter:brightness(1.7)}
+.small-arrow{display:inline-flex;align-self:center;line-height:1}
+.small-arrow .icon{width:13px;height:13px}
+.role-star{display:flex;align-items:center;width:29px;height:31px;flex-shrink:0}
+.role-star .icon{width:31px;height:31px;stroke-width:1.4}
+.role-chevrons{display:flex;align-items:center;font-size:0;letter-spacing:0;margin-right:10px}
+.role-chevrons .icon{width:29px;height:29px}
+.badge-footer-message{display:flex;align-items:center;gap:4px}
+.badge-footer-message .icon{width:7px;height:7px}
+/* The scale wrapper must not sit in front of rotated card hit targets. */
+.badge-scaler{pointer-events:none}
+.badge{pointer-events:auto}

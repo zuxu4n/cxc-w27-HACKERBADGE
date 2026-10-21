@@ -69,7 +69,7 @@ function renderIdentity() {
   $('#badge-photo').alt = `Profile photo of ${fullName}`;
   $('#editor-photo').alt = `Profile photo of ${fullName}`;
   $('#scan-name').textContent = `${fullName} · Hacker`;
-  badge.setAttribute('aria-label', `Holographic hacker badge for ${fullName}. Use arrow keys to tilt.`);
+  badge.setAttribute('aria-label', `Holographic hacker badge for ${fullName}. Drag to tilt, or use arrow keys.`);
 }
 
 function renderQR(value) {
@@ -152,9 +152,10 @@ $('#photo-input').addEventListener('change', async (event) => {
 function setHolo(enabled) {
   state.holo = enabled;
   badge.classList.toggle('holo-off', !enabled);
+  stage.classList.toggle('motion-disabled', !enabled);
   $('#holo-toggle').setAttribute('aria-pressed', String(enabled));
   $('#holo-toggle>span').textContent = enabled ? 'Holo on' : 'Holo off';
-  if (!enabled) { activePointer = false; target.x = target.y = 0; animate(); }
+  if (!enabled) { resetBadgePointer(); }
   else if (!reducedMotion.matches) { demoUntil = performance.now() + 4000; animate(); }
 }
 $('#holo-toggle').addEventListener('click', () => setHolo(!state.holo));
@@ -162,9 +163,7 @@ $('#holo-toggle').addEventListener('click', () => setHolo(!state.holo));
 function openScan() {
   clearTimeout(qrTimeout);
   if (!renderQR(form.elements.qrUrl.value.trim())) { toast('Add a valid QR destination first.'); return; }
-  activePointer = false;
-  target.x = target.y = 0;
-  animate();
+  resetBadgePointer();
   dialog.showModal();
 }
 $('#scan-button').addEventListener('click', openScan);
@@ -226,21 +225,23 @@ function tick(time) {
   if (moving || demo) animate();
 }
 
-stage.addEventListener('pointermove', (event) => {
-  if (!state.holo || reducedMotion.matches || dialog.open) return;
-  const bounds = stage.getBoundingClientRect();
-  const x = Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width));
-  const y = Math.max(0, Math.min(1, (event.clientY - bounds.top) / bounds.height));
-  activePointer = true;
-  demoUntil = 0;
-  target.x = (0.5 - y) * 17;
-  target.y = (x - 0.5) * 20;
-  target.mx = x * 100;
-  target.my = y * 100;
-  animate();
+const resetBadgePointer = bindBadgePointer({
+  stage,
+  canInteract: () => state.holo && !reducedMotion.matches && !dialog.open,
+  onMove: (event) => {
+    const bounds = stage.getBoundingClientRect();
+    const x = Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width));
+    const y = Math.max(0, Math.min(1, (event.clientY - bounds.top) / bounds.height));
+    activePointer = true;
+    demoUntil = 0;
+    target.x = (0.5 - y) * 17;
+    target.y = (x - 0.5) * 20;
+    target.mx = x * 100;
+    target.my = y * 100;
+    animate();
+  },
+  onRelease: () => { activePointer = false; demoUntil = 0; animate(); }
 });
-stage.addEventListener('pointerleave', () => { activePointer = false; animate(); });
-stage.addEventListener('pointerup', (event) => { if (event.pointerType === 'touch') { activePointer = false; animate(); } });
 badge.addEventListener('keydown', (event) => {
   if (!state.holo || reducedMotion.matches) return;
   if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Escape'].includes(event.key)) return;
@@ -256,8 +257,9 @@ badge.addEventListener('keydown', (event) => {
   target.my = 50 - target.x * 4;
   animate();
 });
-badge.addEventListener('blur', () => { activePointer = false; animate(); });
-document.addEventListener('visibilitychange', () => { if (document.hidden) { cancelAnimationFrame(frame); frame = 0; } else animate(); });
+window.addEventListener('blur', resetBadgePointer);
+badge.addEventListener('focusout', (event) => { if (!badge.contains(event.relatedTarget)) resetBadgePointer(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden) { resetBadgePointer(); cancelAnimationFrame(frame); frame = 0; } else animate(); });
 reducedMotion.addEventListener('change', (event) => { if (event.matches) setHolo(false); });
 
 // Canvas export keeps the QR crisp and embeds all artwork in a portable PNG.
@@ -301,6 +303,13 @@ async function exportBadge() {
     function text(value, x, y, size, color = '#101010', font = 'Arial', weight = 400) {
       ctx.fillStyle = color; ctx.font = `${weight} ${size}px ${font}`; ctx.fillText(value, x, y);
     }
+    function icon(id, x, y, size, color = '#101010', strokeWidth = 1.6) {
+      ctx.save();
+      ctx.translate(x, y); ctx.scale(size / 24, size / 24);
+      ctx.strokeStyle = color; ctx.lineWidth = strokeWidth; ctx.lineCap = 'square'; ctx.lineJoin = 'miter';
+      document.querySelectorAll(`#${id} path`).forEach(path => ctx.stroke(new Path2D(path.getAttribute('d'))));
+      ctx.restore();
+    }
     ctx.textAlign = 'right';
     text('WINTER 2027', 366, 34, 8, '#101010', 'Atkinson, monospace');
     text('HACKATHON / W27', 366, 48, 7, '#82827c', 'Atkinson, monospace');
@@ -335,10 +344,10 @@ async function exportBadge() {
     ctx.strokeStyle = '#1b66ff'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(357, 109); ctx.lineTo(370, 109); ctx.lineTo(370, 122); ctx.stroke();
     text('H / 042', 336, 239, 6, '#85857f', 'Atkinson, monospace');
     ctx.fillStyle = '#1b66ff'; ctx.fillRect(0, 260, 392, 45);
-    text('✳', 26, 293, 32, '#ffffff'); text('HACKER', 68, 291, 25, '#ffffff', 'Arial', 800); text('≪', 325, 294, 36, '#ffffff');
+    icon('i-asterisk', 26, 267, 31, '#ffffff', 1.4); text('HACKER', 68, 291, 25, '#ffffff', 'Arial', 800); icon('i-chevrons', 326, 268, 29, '#ffffff');
     text('BUILDING WITH', 26, 330, 6, '#686863', 'Atkinson, monospace');
     ctx.save(); ctx.beginPath(); ctx.rect(107, 315, 237, 22); ctx.clip(); text(state.teamName.trim() || 'Finding my people', 107, 332, 12, '#101010', 'Arial', 600); ctx.restore();
-    text('↗', 354, 332, 16);
+    icon('i-arrow', 354, 320, 12);
     ctx.save(); ctx.beginPath(); ctx.rect(0, 343, 392, 249); ctx.clip();
     const terrainHeight = 525 * terrain.height / terrain.width;
     ctx.drawImage(terrain, -66, 592 + 180 - terrainHeight, 525, terrainHeight);
@@ -355,12 +364,12 @@ async function exportBadge() {
     }
     ctx.fillStyle = '#e8e8e8'; ctx.fillRect(22, 351, 185, 192); ctx.fillStyle = '#fff'; ctx.fillRect(26, 355, 177, 184);
     ctx.imageSmoothingEnabled = false; ctx.drawImage(qr, 37, 365, 154, 154); ctx.imageSmoothingEnabled = true;
-    text('SCAN TO CONNECT', 37, 532, 6, '#101010', 'Atkinson, monospace'); text('↗', 180, 532, 11);
+    text('SCAN TO CONNECT', 37, 532, 6, '#101010', 'Atkinson, monospace'); icon('i-arrow', 180, 524, 10);
     ctx.strokeStyle = '#1b66ff'; ctx.lineWidth = .8;
     for (const [x, y, dx, dy] of [[21, 350, 1, 1], [208, 350, -1, 1], [21, 544, 1, -1], [208, 544, -1, -1]]) { ctx.beginPath(); ctx.moveTo(x, y + dy * 10); ctx.lineTo(x, y); ctx.lineTo(x + dx * 10, y); ctx.stroke(); }
     ctx.fillStyle = '#101010'; ctx.fillRect(0, 555, 392, 37);
     ctx.strokeStyle = '#ffffff40'; ctx.lineWidth = .7; ctx.beginPath(); ctx.moveTo(26, 558); ctx.lineTo(366, 558); ctx.stroke();
-    text('CXC—W27—042', 26, 576, 6, '#eee', 'Atkinson, monospace'); ctx.textAlign = 'right'; text('GO MAKE SOMETHING. ↗', 366, 576, 6, '#eee', 'Atkinson, monospace'); ctx.textAlign = 'left';
+    text('CXC—W27—042', 26, 576, 6, '#eee', 'Atkinson, monospace'); ctx.textAlign = 'right'; text('GO MAKE SOMETHING.', 355, 576, 6, '#eee', 'Atkinson, monospace'); ctx.textAlign = 'left'; icon('i-arrow', 359, 570, 7, '#eee');
     ctx.strokeStyle = '#ffffffa0'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.roundRect(.75, .75, 390.5, 590.5, 15); ctx.stroke();
     const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
     if (!blob) throw new Error('Could not create PNG');

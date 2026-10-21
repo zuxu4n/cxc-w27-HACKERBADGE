@@ -5,6 +5,7 @@ Static HTML/CSS/JS. Requires Node.js; no install step.
 ```sh
 npm run dev    # http://127.0.0.1:4173
 npm run check  # syntax checks
+npm test       # gesture regression tests
 ```
 
 - Edit and deploy `dist/`.

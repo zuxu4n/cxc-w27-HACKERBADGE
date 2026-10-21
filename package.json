@@ -7,6 +7,7 @@
     "build:qr": "node scripts/build-qrbtf.mjs",
     "dev": "node server.mjs",
     "start": "node server.mjs",
-    "check": "node --check dist/app.js && node --check dist/qrbtf.js && node --check scripts/build-qrbtf.mjs && node --check server.mjs"
+    "check": "node --check dist/app.js && node --check dist/badge-pointer.js && node --check dist/qrbtf.js && node --check scripts/build-qrbtf.mjs && node --check server.mjs",
+    "test": "node --test tests/*.test.cjs"
   }
 }
